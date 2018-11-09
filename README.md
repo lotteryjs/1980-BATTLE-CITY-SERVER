@@ -1,1 +1,1 @@
- 伺服器：多人实时坦克大战状态管理与分发
+ Battle-City 伺服器：用于分发 State 到各个 Client。
