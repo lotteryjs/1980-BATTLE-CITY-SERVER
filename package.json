@@ -1,8 +1,0 @@
-{
-  "name": "battle-city-server",
-  "version": "1.0.0",
-  "main": "index.js",
-  "repository": "git@github.com:lotteryjs/battle-city-server.git",
-  "author": "Kirk.Wang <kirk.w.wang@gmail.com>",
-  "license": "MIT"
-}
