@@ -28,6 +28,7 @@
   },
   "homepage": "https://github.com/lotteryjs/battle-city-server#readme",
   "dependencies": {
+    "colyseus": "^0.9.19",
     "kcors": "^2.2.2",
     "koa": "^2.6.2",
     "koa-logger": "^3.2.0",

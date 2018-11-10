@@ -43,5 +43,3 @@ $ npm run test:cov
  **优秀博客**
 
  [程序猿小卡](https://github.com/chyingp/nodejs-learning-guide)
-
- **为什么不用Egg？**
