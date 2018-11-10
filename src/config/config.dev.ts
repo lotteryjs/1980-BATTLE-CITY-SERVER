@@ -3,7 +3,7 @@ import { IConfigOptions } from '../types';
 let config: IConfigOptions = {
   version: "1.0",
   serve: {
-    port: 8080
+    port: 3333
   }
 };
 
