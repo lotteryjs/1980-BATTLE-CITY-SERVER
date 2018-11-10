@@ -5,7 +5,7 @@ const start = () => {
   const execSync = require('child_process').execSync;
   const port = config.serve.port;
   const url = `http://localhost:${port}`; // /api.html
-  const open = false;
+  const open = true;
   // tslint:disable-next-line:no-console
   console.log('----------------------------------------');
   app.listen(port, () => {
