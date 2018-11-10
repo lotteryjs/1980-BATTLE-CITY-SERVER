@@ -32,12 +32,16 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
-**优秀的项目**
+**优秀的项目（本项目结构来源于此，后续会参考更多项目……）**
+
+[nxplorerjs-microservice-starter](https://github.com/ERS-HCL/nxplorerjs-microservice-starter)
 
 [rap2-delos](https://github.com/thx/rap2-delos)
 
 [nestjs/typescript-starter](https://github.com/nestjs/typescript-starter)
 
  **优秀博客**
- 
+
  [程序猿小卡](https://github.com/chyingp/nodejs-learning-guide)
+
+ **为什么不用Egg？**
