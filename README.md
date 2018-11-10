@@ -32,8 +32,12 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
-**参考项目**
+**优秀的项目**
+
+[rap2-delos](https://github.com/thx/rap2-delos)
+
 [nestjs/typescript-starter](https://github.com/nestjs/typescript-starter)
 
  **优秀博客**
+ 
  [程序猿小卡](https://github.com/chyingp/nodejs-learning-guide)
