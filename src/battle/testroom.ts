@@ -7,7 +7,9 @@ export class TestRoom extends Room {
     }
 
     // When room is initialized
-    onInit(options: any) { }
+    onInit(options: any) {
+      // tslint:disable-next-line:no-console
+    }
 
     // Checks if a new client is allowed to join. (default: `return true`)
     requestJoin(options: any, isNew: boolean) {

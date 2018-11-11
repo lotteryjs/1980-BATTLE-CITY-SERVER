@@ -11,17 +11,6 @@ const start = () => {
   const open = true;
   // tslint:disable-next-line:no-console
   console.log('----------------------------------------');
-  // app.listen(port, () => {
-  //   // tslint:disable-next-line:no-console
-  //   console.log(`battle-city-server is running as ${url}`);
-  //   if (!open) return;
-  //   try {
-  //     execSync(`osascript openChrome.applescript ${url}`, { cwd: __dirname, stdio: 'ignore' });
-  //   } catch (e) {
-  //     execSync(`open ${url}`);
-  //   }
-  // });
-
   // Attach WebSocket Server on HTTP Server.
   const gameServer = new Server({
     server: createServer(app.callback()),
