@@ -28,12 +28,21 @@
   },
   "homepage": "https://github.com/lotteryjs/battle-city-server#readme",
   "dependencies": {
+    "@redux-saga/delay-p": "^1.0.0-beta.2",
     "colyseus": "^0.9.19",
+    "history": "^4.7.2",
+    "immutable": "^4.0.0-rc.9",
     "kcors": "^2.2.2",
     "koa": "^2.6.2",
     "koa-logger": "^3.2.0",
     "koa-router": "^7.4.0",
-    "koa-static": "^5.0.0"
+    "koa-static": "^5.0.0",
+    "lodash": "^4.17.11",
+    "react-router-redux": "^4.0.8",
+    "redux": "^4.0.1",
+    "redux-saga": "^1.0.0-beta.3",
+    "require-context": "^1.1.0",
+    "url-search-params": "^1.1.0"
   },
   "devDependencies": {
     "@types/jest": "^23.3.9",
