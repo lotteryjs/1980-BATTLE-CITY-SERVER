@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import * as _ from 'lodash';
 import { PlayerRecord, State, TankFireInfo } from '../types';
 import { asRect, testCollide } from './common';
 import {
@@ -9,7 +9,7 @@ import {
 } from './constants';
 import IndexHelper from './IndexHelper';
 import values from './values';
-import URLSearchParams from 'url-search-params';
+import * as URLSearchParams from 'url-search-params';
 
 export const isInMultiPlayersMode = (state: State) => {
   const params = new URLSearchParams(state.router.location.search);

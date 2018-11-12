@@ -48,7 +48,7 @@ export interface StageResult {
 export default function* stageSaga(stage: StageConfig) {
   const { router }: State = yield select();
   // console.log(router);
-  // yield put(replace(`/stage/${stage.name}${router.location.search}`));
+  yield put(replace(`/stage/${stage.name}${router.location.search}`));
 
   try {
     yield animateCurtainAndLoadMap(stage);

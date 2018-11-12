@@ -15,7 +15,7 @@ export class TestRoom extends Room {
       console.log(options);
       this.store = newStore();
       this.store.subscribe(() => {
-        console.log(this.store.getState());
+        // console.log(this.store.getState());
       });
     }
 

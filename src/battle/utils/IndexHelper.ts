@@ -1,4 +1,4 @@
-import range from 'lodash/range';
+import * as range from 'lodash/range';
 import { ITEM_SIZE_MAP, N_MAP } from './constants';
 
 export type ItemType = 'brick' | 'steel' | 'river' | 'snow' | 'forest';

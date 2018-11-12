@@ -109,7 +109,7 @@ export default function* gameSaga(action: actions.StartGame | actions.ResetGame)
     DEV.LOG && console.log('GAME ENDED');
     const { router }: State = yield select();
     // console.log(router.location);
-    // yield put(replace(`/gameover${router.location.search}`));
+    yield put(replace(`/gameover${router.location.search}`));
   }
   yield put(actions.beforeEndGame());
   yield put(actions.endGame());
