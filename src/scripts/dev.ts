@@ -11,21 +11,20 @@ const start = () => {
   const open = true;
   // tslint:disable-next-line:no-console
   console.log('----------------------------------------');
+  const server = createServer(app.callback());
   // Attach WebSocket Server on HTTP Server.
   const gameServer = new Server({
-    server: createServer(app.callback()),
+    server,
   });
 
   // Register ChatRoom as "test"
   gameServer.register('test', TestRoom);
 
   gameServer.onShutdown(() => {
-    // tslint:disable-next-line:no-console
     console.log(`game server is going down.`);
   });
-
-  gameServer.listen(port, 'localhost', 0, () => {
-      // tslint:disable-next-line:no-console
+  // gameServer.listen(port);
+  gameServer.listen(port, '', 0, () => {
     console.log(`battle-city-server is running as ${url}`);
     if (!open) return;
     try {

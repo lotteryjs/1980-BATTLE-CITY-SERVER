@@ -1,7 +1,10 @@
 import { Room, Client } from 'colyseus';
-import store from './utils/store';
+import { newStore } from './utils/store';
 
 export class TestRoom extends Room {
+
+    store: any;
+
     // Authorize client based on provided options before WebSocket handshake is complete
     onAuth(options: any) {
       return true;
@@ -9,10 +12,11 @@ export class TestRoom extends Room {
 
     // When room is initialized
     onInit(options: any) {
-      // tslint:disable-next-line:no-console
-      store.subscribe(() => {
-        console.log(store.getState());
-      })
+      console.log(options);
+      this.store = newStore();
+      this.store.subscribe(() => {
+        console.log(this.store.getState());
+      });
     }
 
     // Checks if a new client is allowed to join. (default: `return true`)
@@ -21,7 +25,9 @@ export class TestRoom extends Room {
     }
 
     // When client successfully join the room
-    onJoin(client: Client) { }
+    onJoin(client: Client) {
+      console.log(client.sessionId);
+    }
 
     // When a client leaves the room
     onLeave(client: Client, consented: boolean) { }
