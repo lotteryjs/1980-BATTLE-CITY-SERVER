@@ -1,6 +1,6 @@
-import { takeEvery } from 'redux-saga/effects'
-import * as actions from '../utils/actions'
-import { A } from '../utils/actions'
+import { takeEvery } from 'redux-saga/effects';
+import * as actions from '../utils/actions';
+import { A } from '../utils/actions';
 
 const SOUND_NAMES: SoundName[] = [
   'stage_start',
@@ -14,7 +14,7 @@ const SOUND_NAMES: SoundName[] = [
   'powerup_appear',
   'powerup_pick',
   'statistics_1',
-]
+];
 
 export default function* soundManager() {
   // const map = new Map(

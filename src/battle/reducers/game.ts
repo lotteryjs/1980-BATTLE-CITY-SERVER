@@ -1,7 +1,7 @@
-import { Map, Record, Repeat } from 'immutable'
-import { BotGroupConfig } from '../types/StageConfig'
-import { A, Action } from '../utils/actions'
-import { inc } from '../utils/common'
+import { Map, Record, Repeat } from 'immutable';
+import { BotGroupConfig } from '../types/StageConfig';
+import { A, Action } from '../utils/actions';
+import { inc } from '../utils/common';
 
 const emptyTransientKillInfo = Map({
   'player-1': Map({
@@ -16,12 +16,12 @@ const emptyTransientKillInfo = Map({
     power: -1,
     armor: -1,
   }),
-}) as Map<PlayerName, Map<TankLevel, number>>
+}) as Map<PlayerName, Map<TankLevel, number>>;
 
-const defaultRemainingBots = Repeat('basic' as TankLevel, 20).toList()
-const defaultPlayerScores = Map<PlayerName, number>([['player-1', 0], ['player-2', 0]])
+const defaultRemainingBots = Repeat('basic' as TankLevel, 20).toList();
+const defaultPlayerScores = Map<PlayerName, number>([['player-1', 0], ['player-2', 0]]);
 
-type GameStatus = 'idle' | 'on' | 'stat' | 'gameover'
+type GameStatus = 'idle' | 'on' | 'stat' | 'gameover';
 
 const GameRecordBase = Record(
   {
@@ -57,7 +57,7 @@ const GameRecordBase = Record(
     stageEnterCurtainT: 0,
   },
   'GameRecord',
-)
+);
 
 // TODO 需要重构 game-record 的结构
 export class GameRecord extends GameRecordBase {}
@@ -67,19 +67,19 @@ export default function game(state = new GameRecord(), action: Action) {
     return state
       .set('status', 'on')
       .set('currentStageName', null)
-      .set('playersScores', defaultPlayerScores)
+      .set('playersScores', defaultPlayerScores);
   } else if (action.type === A.ResetGame) {
-    return state.set('status', 'idle').set('currentStageName', null)
+    return state.set('status', 'idle').set('currentStageName', null);
   } else if (action.type === A.ShowStatistics) {
-    return state.set('status', 'stat')
+    return state.set('status', 'stat');
   } else if (action.type === A.HideStatistics) {
-    return state.set('status', 'on')
+    return state.set('status', 'on');
   } else if (action.type === A.EndGame) {
     return state
       .set('status', 'gameover')
       .set('lastStageName', state.currentStageName)
       .set('currentStageName', null)
-      .set('playersScores', defaultPlayerScores)
+      .set('playersScores', defaultPlayerScores);
   } else if (action.type === A.StartStage) {
     return state.merge({
       currentStageName: action.stage.name,
@@ -87,39 +87,39 @@ export default function game(state = new GameRecord(), action: Action) {
       killInfo: Map(),
       remainingBots: action.stage.bots.flatMap(BotGroupConfig.unwind),
       showTotalKillCount: false,
-    })
+    });
   } else if (action.type === A.EndStage) {
-    return state.set('currentStageName', null)
+    return state.set('currentStageName', null);
   } else if (action.type === A.RemoveFirstRemainingBot) {
-    return state.update('remainingBots', bots => bots.shift())
+    return state.update('remainingBots', bots => bots.shift());
   } else if (action.type === A.IncKillCount) {
-    const { playerName, level } = action
-    return state.updateIn(['killInfo', playerName, level], x => (x == null ? 1 : x + 1))
+    const { playerName, level } = action;
+    return state.updateIn(['killInfo', playerName, level], x => (x == null ? 1 : x + 1));
   } else if (action.type === A.UpdateTransientKillInfo) {
-    return state.set('transientKillInfo', action.info)
+    return state.set('transientKillInfo', action.info);
   } else if (action.type === A.ShowTotalKillCount) {
-    return state.set('showTotalKillCount', true)
+    return state.set('showTotalKillCount', true);
   } else if (action.type === A.SetBotFrozenTimeout) {
-    return state.set('botFrozenTimeout', action.timeout)
+    return state.set('botFrozenTimeout', action.timeout);
   } else if (action.type === A.GamePause) {
-    return state.set('paused', true)
+    return state.set('paused', true);
   } else if (action.type === A.GameResume) {
-    return state.set('paused', false)
+    return state.set('paused', false);
   } else if (action.type === A.UpdateCurtain) {
-    return state.set('stageEnterCurtainT', action.t)
+    return state.set('stageEnterCurtainT', action.t);
   } else if (action.type === A.ShowHud) {
-    return state.set('showHUD', true)
+    return state.set('showHUD', true);
   } else if (action.type === A.HideHud) {
-    return state.set('showHUD', false)
+    return state.set('showHUD', false);
   } else if (action.type === A.UpdateComingStageName) {
-    return state.set('comingStageName', action.stageName)
+    return state.set('comingStageName', action.stageName);
   } else if (action.type === A.IncPlayerScore) {
     return state.update('playersScores', scores =>
       scores.update(action.playerName, inc(action.count)),
-    )
+    );
   } else if (action.type === A.SetIsSpawningBotTank) {
-    return state.set('isSpawningBotTank', action.isSpawning)
+    return state.set('isSpawningBotTank', action.isSpawning);
   } else {
-    return state
+    return state;
   }
 }

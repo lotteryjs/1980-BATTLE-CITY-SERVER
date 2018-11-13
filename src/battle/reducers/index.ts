@@ -1,5 +1,5 @@
 import { List } from 'immutable';
-import { routerReducer } from 'react-router-redux';
+// import { routerReducer } from 'react-router-redux';
 import { combineReducers } from 'redux';
 import devOnly from './dev';
 import MapRecord from '../types/MapRecord';
@@ -19,7 +19,7 @@ import tanks, { TanksMap } from './tanks';
 import texts, { TextsMap } from './texts';
 
 export interface State {
-  router: any;
+  // router: any;
   game: GameRecord;
   player1: PlayerRecord;
   player2: PlayerRecord;
@@ -54,7 +54,7 @@ export function editorContent(state = new StageConfig(), action: Action) {
 }
 
 export default combineReducers<State>({
-  router: routerReducer,
+  // router: routerReducer,
   game,
   player1,
   player2,

@@ -24,5 +24,5 @@ export const DEV = {
   // 是否打印游戏性能相关日志
   LOG_PERF: false,
   // 是否跳过关卡选择
-  SKIP_CHOOSE_STAGE: true
-}
+  SKIP_CHOOSE_STAGE: true,
+};

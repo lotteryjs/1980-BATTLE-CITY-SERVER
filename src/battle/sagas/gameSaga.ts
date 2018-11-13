@@ -1,4 +1,4 @@
-import { replace } from 'react-router-redux';
+// import { replace } from 'react-router-redux';
 import { all, put, race, select, take } from 'redux-saga/effects';
 import * as delay from '@redux-saga/delay-p';
 import { State } from '../reducers';
@@ -107,9 +107,9 @@ export default function* gameSaga(action: actions.StartGame | actions.ResetGame)
 
   if (result.flow) {
     DEV.LOG && console.log('GAME ENDED');
-    const { router }: State = yield select();
+    // const { router }: State = yield select();
     // console.log(router.location);
-    yield put(replace(`/gameover${router.location.search}`));
+    // yield put(replace(`/gameover${router.location.search}`));
   }
   yield put(actions.beforeEndGame());
   yield put(actions.endGame());

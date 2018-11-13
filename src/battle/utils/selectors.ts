@@ -12,8 +12,9 @@ import values from './values';
 import * as URLSearchParams from 'url-search-params';
 
 export const isInMultiPlayersMode = (state: State) => {
-  const params = new URLSearchParams(state.router.location.search);
-  return params.has(MULTI_PLAYERS_SEARCH_KEY);
+  // const params = new URLSearchParams(state.router.location.search);
+  // return params.has(MULTI_PLAYERS_SEARCH_KEY);
+  return false;
 };
 
 function isPlayerDead(player: PlayerRecord) {

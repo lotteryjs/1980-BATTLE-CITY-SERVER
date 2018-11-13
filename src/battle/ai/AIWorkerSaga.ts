@@ -1,93 +1,93 @@
-import { Map as IMap } from 'immutable'
-import { Task } from 'redux-saga'
-import { fork, race, select, take } from 'redux-saga/effects'
-import { State } from '../reducers'
-import { TankFireInfo, TankRecord } from '../types'
-import * as actions from '../utils/actions'
-import { A } from '../utils/actions'
-import { randint } from '../utils/common'
-import { BLOCK_DISTANCE_THRESHOLD, BLOCK_TIMEOUT } from '../utils/constants'
-import * as selectors from '../utils/selectors'
-import Timing from '../utils/Timing'
-import Bot from './Bot'
-import * as dodgeUtils from './dodge-utils'
-import { getEnv, RelativePosition } from './env-utils'
-import { calculateFireEstimateMap, FireEstimate, getAIFireCount, getFireResist } from './fire-utils'
-import followPath from './followPath'
-import getAllSpots from './getAllSpots'
-import { logAI } from './logger'
-import { findPath } from './shortest-path'
-import simpleFireLoop from './simpleFireLoop'
-import Spot from './Spot'
-import { around, getBulletSpot, getTankSpot } from './spot-utils'
+import { Map as IMap } from 'immutable';
+import { Task } from 'redux-saga';
+import { fork, race, select, take } from 'redux-saga/effects';
+import { State } from '../reducers';
+import { TankFireInfo, TankRecord } from '../types';
+import * as actions from '../utils/actions';
+import { A } from '../utils/actions';
+import { randint } from '../utils/common';
+import { BLOCK_DISTANCE_THRESHOLD, BLOCK_TIMEOUT } from '../utils/constants';
+import * as selectors from '../utils/selectors';
+import Timing from '../utils/Timing';
+import Bot from './Bot';
+import * as dodgeUtils from './dodge-utils';
+import { getEnv, RelativePosition } from './env-utils';
+import { calculateFireEstimateMap, FireEstimate, getAIFireCount, getFireResist } from './fire-utils';
+import followPath from './followPath';
+import getAllSpots from './getAllSpots';
+import { logAI } from './logger';
+import { findPath } from './shortest-path';
+import simpleFireLoop from './simpleFireLoop';
+import Spot from './Spot';
+import { around, getBulletSpot, getTankSpot } from './spot-utils';
 import { DEV } from '../devConfig';
 
 function getRandomPassableSpot(posInfoArray: Spot[]) {
   while (true) {
-    const t = randint(0, 26 ** 2)
+    const t = randint(0, 26 ** 2);
     if (posInfoArray[t].canPass) {
-      return t
+      return t;
     }
   }
 }
 
 function* wanderMode(ctx: Bot) {
-  DEV.LOG_AI && logAI('enter wander-mode')
-  const simpleFireLoopTask: Task = yield fork(simpleFireLoop, ctx)
-  const tank: TankRecord = yield select(selectors.tank, ctx.tankId)
-  DEV.ASSERT && console.assert(tank != null)
-  const { map }: State = yield select()
-  const allSpots = getAllSpots(map)
-  const path = findPath(allSpots, getTankSpot(tank), getRandomPassableSpot(allSpots))
+  DEV.LOG_AI && logAI('enter wander-mode');
+  const simpleFireLoopTask: Task = yield fork(simpleFireLoop, ctx);
+  const tank: TankRecord = yield select(selectors.tank, ctx.tankId);
+  DEV.ASSERT && console.assert(tank != null);
+  const { map }: State = yield select();
+  const allSpots = getAllSpots(map);
+  const path = findPath(allSpots, getTankSpot(tank), getRandomPassableSpot(allSpots));
   if (path != null) {
-    yield followPath(ctx, path)
+    yield followPath(ctx, path);
   } else {
-    yield Timing.delay(200)
+    yield Timing.delay(200);
   }
-  simpleFireLoopTask.cancel()
+  simpleFireLoopTask.cancel();
 }
 
 function* attackEagleMode(ctx: Bot) {
-  DEV.LOG_AI && logAI('enter attack-eagle-mode')
-  const simpleFireLoopTask: Task = yield fork(simpleFireLoop, ctx)
-  const { map }: State = yield select()
-  const tank: TankRecord = yield select(selectors.tank, ctx.tankId)
-  DEV.ASSERT && console.assert(tank != null)
-  const eagleWeakSpots = around(getTankSpot(map.eagle))
-  const allSpots = getAllSpots(map)
-  const estMap = calculateFireEstimateMap(eagleWeakSpots, allSpots, map)
+  DEV.LOG_AI && logAI('enter attack-eagle-mode');
+  const simpleFireLoopTask: Task = yield fork(simpleFireLoop, ctx);
+  const { map }: State = yield select();
+  const tank: TankRecord = yield select(selectors.tank, ctx.tankId);
+  DEV.ASSERT && console.assert(tank != null);
+  const eagleWeakSpots = around(getTankSpot(map.eagle));
+  const allSpots = getAllSpots(map);
+  const estMap = calculateFireEstimateMap(eagleWeakSpots, allSpots, map);
   const candidates = Array.from(estMap.keys()).filter(
     t => allSpots[t].canPass && getFireResist(estMap.get(t)) <= 8,
-  )
-  const target = candidates[randint(0, candidates.length)]
-  const path = findPath(allSpots, getTankSpot(tank), target)
+  );
+  const target = candidates[randint(0, candidates.length)];
+  const path = findPath(allSpots, getTankSpot(tank), target);
   if (path != null) {
-    yield followPath(ctx, path)
-    simpleFireLoopTask.cancel()
-    yield attackEagle(ctx, estMap.get(target))
+    yield followPath(ctx, path);
+    simpleFireLoopTask.cancel();
+    yield attackEagle(ctx, estMap.get(target));
   } else {
-    simpleFireLoopTask.cancel()
-    yield Timing.delay(200)
+    simpleFireLoopTask.cancel();
+    yield Timing.delay(200);
   }
 }
 
 function* attackEagle(ctx: Bot, fireEstimate: FireEstimate) {
-  DEV.LOG_AI && logAI('start attack eagle')
-  const { map, tanks }: State = yield select()
-  const tank: TankRecord = yield select(selectors.tank, ctx.tankId)
-  DEV.ASSERT && console.assert(tank != null)
-  const env = getEnv(map, tanks, tank)
-  ctx.turn(env.tankPosition.eagle.getPrimaryDirection())
-  yield take(A.Tick) // 等待一个 tick, 确保转向已经完成
-  let fireCount = getAIFireCount(fireEstimate)
+  DEV.LOG_AI && logAI('start attack eagle');
+  const { map, tanks }: State = yield select();
+  const tank: TankRecord = yield select(selectors.tank, ctx.tankId);
+  DEV.ASSERT && console.assert(tank != null);
+  const env = getEnv(map, tanks, tank);
+  ctx.turn(env.tankPosition.eagle.getPrimaryDirection());
+  yield take(A.Tick); // 等待一个 tick, 确保转向已经完成
+  let fireCount = getAIFireCount(fireEstimate);
   while (fireCount > 0) {
-    const fireInfo: TankFireInfo = yield select(selectors.fireInfo, ctx.tankId)
+    const fireInfo: TankFireInfo = yield select(selectors.fireInfo, ctx.tankId);
     if (fireInfo.canFire) {
-      ctx.fire()
-      yield take(ctx.noteChannel, 'bullet-complete')
-      fireCount--
+      ctx.fire();
+      yield take(ctx.noteChannel, 'bullet-complete');
+      fireCount--;
     } else {
-      yield Timing.delay(fireInfo.cooldown)
+      yield Timing.delay(fireInfo.cooldown);
     }
   }
 }
@@ -95,14 +95,14 @@ function* attackEagle(ctx: Bot, fireEstimate: FireEstimate) {
 // TODO WIP
 function* dangerDetectionLoop(ctx: Bot) {
   while (true) {
-    const tank: TankRecord = yield select(selectors.tank, ctx.tankId)
-    DEV.ASSERT && console.assert(tank != null)
-    const tankWeakSpots = around(getTankSpot(tank))
-    const { map, bullets, tanks }: State = yield select()
-    const allSpots = getAllSpots(map)
-    const estMap = IMap(calculateFireEstimateMap(tankWeakSpots, allSpots, map))
+    const tank: TankRecord = yield select(selectors.tank, ctx.tankId);
+    DEV.ASSERT && console.assert(tank != null);
+    const tankWeakSpots = around(getTankSpot(tank));
+    const { map, bullets, tanks }: State = yield select();
+    const allSpots = getAllSpots(map);
+    const estMap = IMap(calculateFireEstimateMap(tankWeakSpots, allSpots, map));
     // directEstMap: 开火后可以直接击中坦克的那些位置
-    const directEstMap = estMap.filter(est => getFireResist(est) === 0)
+    const directEstMap = estMap.filter(est => getFireResist(est) === 0);
     // upcomingBullets: 即将击中坦克的子弹
     const upcomingBullets = bullets.filter(
       blt =>
@@ -110,11 +110,11 @@ function* dangerDetectionLoop(ctx: Bot) {
         directEstMap.has(getBulletSpot(blt)) &&
         // TODO 直接调用getPrimaryDirection可能会有一点点的误差
         new RelativePosition(blt, tank).getPrimaryDirection() === blt.direction,
-    )
+    );
     if (!upcomingBullets.isEmpty()) {
-      DEV.LOG_AI && logAI('danger-detected', upcomingBullets.toJS())
+      DEV.LOG_AI && logAI('danger-detected', upcomingBullets.toJS());
       // 这里坦克只考虑躲避第一个子弹
-      const bullet = upcomingBullets.first()
+      const bullet = upcomingBullets.first();
       // 尝试以下方式来躲避危险
       // 1. 继续前进
       if (dodgeUtils.canMoveToDodge(tank, bullet)) {
@@ -123,27 +123,27 @@ function* dangerDetectionLoop(ctx: Bot) {
       // 2. 向前开火以抵消攻击
       // 3. 找到一个附近的 passable spot，然后开到那个位置
     }
-    yield Timing.delay(200)
+    yield Timing.delay(200);
   }
 }
 
 function* blocked(ctx: Bot) {
-  let acc = 0
-  let lastTank = yield select(selectors.tank, ctx.tankId)
+  let acc = 0;
+  let lastTank = yield select(selectors.tank, ctx.tankId);
   while (acc < BLOCK_TIMEOUT) {
-    const { delta }: actions.Tick = yield take(actions.A.Tick)
-    const tank: TankRecord = yield select(selectors.tank, ctx.tankId)
+    const { delta }: actions.Tick = yield take(actions.A.Tick);
+    const tank: TankRecord = yield select(selectors.tank, ctx.tankId);
     if (tank.frozenTimeout > 0) {
-      continue
+      continue;
     }
     if (Math.abs(tank.x - lastTank.x) + Math.abs(tank.y - lastTank.y) <= BLOCK_DISTANCE_THRESHOLD) {
-      acc += delta
+      acc += delta;
     } else {
-      acc = 0
+      acc = 0;
     }
-    lastTank = tank
+    lastTank = tank;
   }
-  DEV.LOG_AI && logAI('blocked')
+  DEV.LOG_AI && logAI('blocked');
 }
 
 /**
@@ -157,20 +157,20 @@ function* blocked(ctx: Bot) {
  * 游戏逻辑和AI逻辑使用这两个channel来进行数据交换
  */
 export default function* AIWorkerSaga(ctx: Bot) {
-  yield fork(dangerDetectionLoop, ctx)
+  yield fork(dangerDetectionLoop, ctx);
 
-  let continuousWanderCount = 0
+  let continuousWanderCount = 0;
   while (true) {
-    yield race<any>([blocked(ctx), mode()])
+    yield race<any>([blocked(ctx), mode()]);
   }
 
   function* mode() {
     if (Math.random() < 0.9 - continuousWanderCount * 0.02) {
-      continuousWanderCount++
-      yield wanderMode(ctx)
+      continuousWanderCount++;
+      yield wanderMode(ctx);
     } else {
-      continuousWanderCount = 0
-      yield attackEagleMode(ctx)
+      continuousWanderCount = 0;
+      yield attackEagleMode(ctx);
     }
   }
 }

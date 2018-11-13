@@ -12,10 +12,10 @@ export class TestRoom extends Room {
 
     // When room is initialized
     onInit(options: any) {
-      console.log(options);
       this.store = newStore();
       this.store.subscribe(() => {
         // console.log(this.store.getState());
+        this.broadcast( this.store.getState() );
       });
     }
 

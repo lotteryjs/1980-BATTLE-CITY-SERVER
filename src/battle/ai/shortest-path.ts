@@ -1,5 +1,5 @@
-import Spot from './Spot'
-import { dirs } from './spot-utils'
+import Spot from './Spot';
+import { dirs } from './spot-utils';
 
 // TODO 使用A*算法
 // TODO 寻找路径还需要考虑经过的位置安全与否 （是否容易被 player 玩家轻易地击中）
@@ -9,65 +9,65 @@ export function findPath(
   stopConditionOrTarget: number | ((spot: Spot) => boolean),
   calculateScore: (step: number, spot: Spot) => number = step => step,
 ) {
-  let stopCondition: (spot: Spot) => boolean
+  let stopCondition: (spot: Spot) => boolean;
   if (typeof stopConditionOrTarget === 'number') {
-    stopCondition = (spot: Spot) => spot.t === stopConditionOrTarget
+    stopCondition = (spot: Spot) => spot.t === stopConditionOrTarget;
   } else {
-    stopCondition = stopConditionOrTarget
+    stopCondition = stopConditionOrTarget;
   }
 
   function getPath(end: number) {
-    const path: number[] = []
+    const path: number[] = [];
     while (true) {
-      path.unshift(end)
+      path.unshift(end);
       if (end === start) {
-        break
+        break;
       }
-      end = pre[end]
+      end = pre[end];
     }
-    return path
+    return path;
   }
 
-  const pre = new Array<number>(allSpots.length)
-  const distance = new Array<number>(allSpots.length)
-  pre.fill(-1)
-  distance.fill(Infinity)
+  const pre = new Array<number>(allSpots.length);
+  const distance = new Array<number>(allSpots.length);
+  pre.fill(-1);
+  distance.fill(Infinity);
 
-  let end = -1
-  let minScore = Infinity
-  let step = 0
-  let cnt = new Set<number>()
-  cnt.add(start)
+  let end = -1;
+  let minScore = Infinity;
+  let step = 0;
+  let cnt = new Set<number>();
+  cnt.add(start);
   while (cnt.size > 0) {
-    step++
-    const next = new Set<number>()
+    step++;
+    const next = new Set<number>();
     for (const u of cnt) {
-      const spot = allSpots[u]
+      const spot = allSpots[u];
       if (!spot.canPass) {
-        continue
+        continue;
       }
-      distance[u] = step
+      distance[u] = step;
       if (stopCondition(spot)) {
-        const score = calculateScore(step, spot)
+        const score = calculateScore(step, spot);
         if (score < minScore) {
-          minScore = score
-          end = u
+          minScore = score;
+          end = u;
         }
       }
       for (const dir of dirs) {
-        const v = dir(u)
+        const v = dir(u);
         if (v != null && distance[v] === Infinity) {
-          next.add(v)
-          pre[v] = u
+          next.add(v);
+          pre[v] = u;
         }
       }
     }
-    cnt = next
+    cnt = next;
   }
 
   if (end !== -1) {
-    return getPath(end)
+    return getPath(end);
   } else {
-    return null
+    return null;
   }
 }

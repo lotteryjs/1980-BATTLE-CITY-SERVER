@@ -1,7 +1,7 @@
 // import ReactDOM from 'react-dom';
 import { eventChannel, EventChannel } from 'redux-saga';
 import { put, select, take, takeEvery } from 'redux-saga/effects';
-import { performance } from "perf_hooks";
+import { performance } from 'perf_hooks';
 import { State } from '../types';
 import * as actions from '../utils/actions';
 
@@ -17,7 +17,7 @@ export default function* tickEmitter(options: TickEmitterOptions = {}) {
   const tickChannel = eventChannel<actions.Tick>(emit => {
     let lastTime = performance.now();
     // let requestId = requestAnimationFrame(emitTick);
-    let requestId = setTimeout(emitTick, 1000 / 60)
+    let requestId = setTimeout(emitTick, 1000 / 60);
 
     function emitTick() {
       const now = performance.now();
@@ -25,7 +25,7 @@ export default function* tickEmitter(options: TickEmitterOptions = {}) {
       emit(actions.tick(now - lastTime));
       lastTime = now;
       // requestId = requestAnimationFrame(emitTick);
-      requestId = setTimeout(emitTick, 1000 / 60)
+      requestId = setTimeout(emitTick, 1000 / 60);
     }
 
     // return () => cancelAnimationFrame(requestId);
