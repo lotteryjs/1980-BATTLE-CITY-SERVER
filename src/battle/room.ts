@@ -1,4 +1,5 @@
 import { Room, Client } from 'colyseus';
+import * as actions from './utils/actions';
 
 export class BattleRoom extends Room {
 
@@ -21,7 +22,9 @@ export class BattleRoom extends Room {
 
     // When client successfully join the room
     onJoin(client: Client) {
-      console.log(client.sessionId);
+      if (this.clients.length === 2) {
+        this.broadcast(actions.startGame(0));
+      }
     }
 
     // When a client leaves the room

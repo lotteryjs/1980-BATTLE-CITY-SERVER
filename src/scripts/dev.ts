@@ -2,7 +2,7 @@ import { createServer } from 'http';
 import { Server } from 'colyseus';
 import config from '../config';
 import app from './app';
-import { TestRoom } from '../battle/testroom';
+import { BattleRoom } from '../battle/room';
 
 const start = () => {
   const execSync = require('child_process').execSync;
@@ -18,7 +18,7 @@ const start = () => {
   });
 
   // Register ChatRoom as "test"
-  gameServer.register('test', TestRoom);
+  gameServer.register('battle', BattleRoom);
 
   gameServer.onShutdown(() => {
     console.log(`game server is going down.`);
