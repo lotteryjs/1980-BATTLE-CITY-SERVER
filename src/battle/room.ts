@@ -1,6 +1,8 @@
 import { Room, Client } from 'colyseus';
 import * as actions from './utils/actions';
 
+// 机器人产生坐标
+const botSpawnPos = [];
 export class BattleRoom extends Room {
 
     store: any;
@@ -31,7 +33,26 @@ export class BattleRoom extends Room {
     onLeave(client: Client, consented: boolean) { }
 
     // When a client sends a message
-    onMessage(client: Client, message: any) { }
+    onMessage(client: Client, message: any) {
+      const { type, payload } = message;
+      switch (type) {
+        // 产生机器人坐标
+        case 'BOTSPAWNPOS':
+          botSpawnPos.push(payload);
+          if (botSpawnPos.length === 2) {
+            // 分发第一个玩家产生的坐标
+            this.broadcast({
+              type: 'BOTSPAWNPOS',
+              payload: {
+                x: botSpawnPos[0].x,
+                y: botSpawnPos[0].y,
+              },
+            }),
+            botSpawnPos.length = 0;
+          }
+          break;
+      }
+    }
 
     // Cleanup callback, called after there are no more clients in the room. (see `autoDispose`)
     onDispose() { }
