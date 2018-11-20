@@ -12,6 +12,7 @@ interface IPlayer {
     x: number,
     y: number,
   };
+  aiModeRandom: number;
 }
 
 const players: EntityMap<IPlayer> = {};
@@ -19,6 +20,9 @@ const players: EntityMap<IPlayer> = {};
 // Server 已经完成了的 Action;
 const completedActions = [];
 
+/**
+ * 同步服务器 action
+ */
 function syncServerAction(client) {
   // 遍历服务器已经分发过的 action
   for (let i = 0; i < completedActions.length; i++) {
@@ -32,6 +36,14 @@ function syncServerAction(client) {
       break;
     }
   }
+}
+
+/**
+ * clients 是否已经准备好了
+ */
+function isReady(cb) {
+  const result = Object.keys(players).filter(cb);
+  return result.length === 2;
 }
 
 export class BattleRoom extends Room {
@@ -64,6 +76,7 @@ export class BattleRoom extends Room {
           x: -1,
           y: -1,
         },
+        aiModeRandom: -1,
       };
       // 服务器是否已经分发了 A.StartGame
       if (completedActions.length) {
@@ -90,7 +103,9 @@ export class BattleRoom extends Room {
     // When a client sends a message
     onMessage(client: Client, message: any) {
       const { type, payload } = message;
-      if (completedActions.length > players[client.sessionId].actionTypes.length) {
+      // 当前玩家
+      const player = players[client.sessionId];
+      if (completedActions.length > player.actionTypes.length) {
         syncServerAction.bind(this)(client);
         return;
       }
@@ -98,10 +113,9 @@ export class BattleRoom extends Room {
         // 产生机器人坐标
         case 'BOTSPAWNPOS':
           // 客户端传过来的 x, y 坐标
-          players[client.sessionId].botSpawnPos = payload;
+          player.botSpawnPos = payload;
           // 是否已经接受完当前所有 client 的 BOTSPAWNPOS 请求
-          const filter = Object.keys(players).filter(key => players[key].botSpawnPos.x !== -1);
-          if (filter.length === 2) {
+          if (isReady(sessionId => players[sessionId].botSpawnPos.x !== -1)) {
             // 分发最后一个玩家客户端产生🤖坐标
             const action = {
               type,
@@ -115,6 +129,20 @@ export class BattleRoom extends Room {
               players[sessionId].botSpawnPos = { x: -1, y: -1 };
               players[sessionId].actionTypes.push(type);
             });
+          }
+          break;
+        case 'AIModeRandom':
+          player.aiModeRandom = payload;
+          const cb = sessionId => players[sessionId].aiModeRandom !== -1;
+          if (isReady(cb)) {
+            const action = { type, payload };
+            this.broadcast(action);
+            completedActions.push(action);
+            Object.keys(players).forEach(sessionId => {
+              players[sessionId].aiModeRandom = -1;
+              players[sessionId].actionTypes.push(type);
+            });
+            console.log(action);
           }
           break;
       }
