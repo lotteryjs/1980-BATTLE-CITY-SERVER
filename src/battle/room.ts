@@ -7,7 +7,6 @@ import { State } from './state';
 export class BattleRoom extends Room<State> {
   onInit(options) {
       console.log('BattleRoom created!', options);
-
       this.setState(new State());
   }
 
@@ -19,9 +18,30 @@ export class BattleRoom extends Room<State> {
       this.state.removePlayer(client.sessionId);
   }
 
-  onMessage(client, data) {
-      console.log('StateHandlerRoom received message from', client.sessionId, ':', data);
-      this.state.movePlayer(client.sessionId, data);
+  onMessage(client, action) {
+    //   console.log('StateHandlerRoom received message from', client.sessionId, ':', action);
+    //   this.state.clientsController(client.sessionId, action);
+      const { type, payload } = action;
+      switch (type) {
+            case 'KeyDown':
+            this.broadcast({
+                type,
+                payload: {
+                    ...payload,
+                    id: client.sessionId,
+                },
+            });
+            break;
+            case 'KeyUp':
+            this.broadcast({
+                type,
+                payload: {
+                    ...payload,
+                    id: client.sessionId,
+                },
+            });
+            break;
+        }
   }
 
   onDispose() {

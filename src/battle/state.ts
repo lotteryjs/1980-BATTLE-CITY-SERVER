@@ -7,6 +7,7 @@ export class State {
     something = 'This attribute won\'t be sent to the client-side';
 
     createPlayer(id: string) {
+        console.log('createPlayer');
         this.players[ id ] = new Player();
     }
 
@@ -14,17 +15,14 @@ export class State {
         delete this.players[ id ];
     }
 
-    movePlayer(id: string, movement: any) {
-        if (movement.x) {
-            this.players[ id ].x += movement.x * 10;
+    clientsController(id: string, action: any) {
+        // if (movement.x) {
+        //     this.players[ id ].x += movement.x * 10;
 
-        } else if (movement.y) {
-            this.players[ id ].y += movement.y * 10;
-        }
+        // } else if (movement.y) {
+        //     this.players[ id ].y += movement.y * 10;
+        // }
     }
 }
 
-export class Player {
-    x = Math.floor(Math.random() * 400);
-    y = Math.floor(Math.random() * 400);
-}
+export class Player {}
