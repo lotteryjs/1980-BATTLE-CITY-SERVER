@@ -6,7 +6,7 @@ import { State } from './state';
 
 export class BattleRoom extends Room<State> {
   onInit(options) {
-      console.log('BattleRoom created!', options);
+      console.log('onInit', options);
       this.setState(new State());
   }
 
@@ -19,8 +19,6 @@ export class BattleRoom extends Room<State> {
   }
 
   onMessage(client, action) {
-    //   console.log('StateHandlerRoom received message from', client.sessionId, ':', action);
-    //   this.state.clientsController(client.sessionId, action);
       const { type, payload } = action;
       switch (type) {
             case 'KeyDown':
