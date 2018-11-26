@@ -38,6 +38,14 @@ export class BattleRoom extends Room<State> {
                     id: client.sessionId,
                 },
             });
+            // case 'SYNC':
+            // this.broadcast({
+            //     type,
+            //     payload: {
+            //         ...payload,
+            //         id: client.sessionId,
+            //     },
+            // });
             break;
         }
   }
